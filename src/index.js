@@ -1,29 +1,42 @@
-// these are the variables you can use as inputs to your algorithms
-console.log(fxhash)   // the 64 chars hex number fed to your algorithm
-console.log(fxrand()) // deterministic PRNG function, use it instead of Math.random()
+import p5 from 'p5'
 
-// note about the fxrand() function 
-// when the "fxhash" is always the same, it will generate the same sequence of
-// pseudo random numbers, always
 
-//----------------------
-// defining features
-//----------------------
-// You can define some token features by populating the $fxhashFeatures property
-// of the window object.
-// More about it in the guide, section features:
-// [https://fxhash.xyz/articles/guide-mint-generative-token#features]
-//
-// window.$fxhashFeatures = {
-//   "Background": "Black",
-//   "Number of lines": 10,
-//   "Inverted": true
-// }
+const seed = ~~(fxrand() * 123456789)
+console.log(`fxhash: ${fxhash} // seed: ${seed}`)
+let s,
+    grain = []
 
-// this code writes the values to the DOM as an example
-const container = document.createElement("div")
-container.innerText = `
-  random hash: ${fxhash}\n
-  some pseudo random values: [ ${fxrand()}, ${fxrand()}, ${fxrand()}, ${fxrand()}, ${fxrand()},... ]\n
-`
-document.body.prepend(container)
+
+const sketch = p5 => {
+  
+  p5.setup = _ => {
+    
+    // Creating canvas
+    s = p5.min(p5.windowWidth, p5.windowHeight)
+    p5.createCanvas(s, s)
+    
+    // Setting up seed
+    p5.randomSeed(seed)
+    p5.noiseSeed(seed)
+
+    p5.noLoop()
+
+  }
+  
+
+  p5.draw = _ => {
+    
+    p5.background('#FDFDFD')
+
+  }
+
+
+  p5.windowResized = _ => {
+    s = p5.min(p5.windowWidth, p5.windowHeight)
+    p5.resizeCanvas(s, s)
+  }
+
+}
+
+
+const myp5 = new p5(sketch, window.document.body)
